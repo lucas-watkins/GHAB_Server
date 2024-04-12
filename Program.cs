@@ -64,6 +64,7 @@ namespace Server{
             foreach (contextHandler handler in ctxHandlers){
                 if (absPath != null &&(handler.isPost ? "POST" : "GET").Equals(httpMethod) && 
                     handler.path.Equals(absPath)){
+                        // if http method is get get response and send back message returned from task
                         if (httpMethod.Equals("GET")){
                             HttpListenerResponse response = context.Response;
                             string message = 
@@ -77,6 +78,7 @@ namespace Server{
                                 "  </body>" +
                                 "</html>"; 
 
+                            // write back bytes
                             byte[] data = Encoding.UTF8.GetBytes(message);
                             response.ContentType = "text/html"; 
                             response.ContentEncoding = Encoding.UTF8; 
@@ -85,6 +87,8 @@ namespace Server{
                             response.OutputStream.Close(); 
                         }
 
+                        // if http method is post then run a task asyncronously with the read bytes as input and send
+                        // back "OK" on webpage
                         if (httpMethod.Equals("POST")){ 
                             Stream inputStream = context.Request.InputStream;
                             StreamReader sr = new StreamReader(inputStream, context.Request.ContentEncoding); 
@@ -103,6 +107,7 @@ namespace Server{
                                 "  </body>" +
                                 "</html>");
 
+                            // write bytes
                             HttpListenerResponse response = context.Response;  
                             response.ContentType = "text/html";
                             response.ContentEncoding = Encoding.UTF8; 
