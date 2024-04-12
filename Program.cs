@@ -84,7 +84,33 @@ namespace Server{
                             await response.OutputStream.WriteAsync(data, 0, data.Length);
                             response.OutputStream.Close(); 
                         }
-                        // handle task
+
+                        if (httpMethod.Equals("POST")){ 
+                            Stream inputStream = context.Request.InputStream;
+                            StreamReader sr = new StreamReader(inputStream, context.Request.ContentEncoding); 
+                            byte[] data = context.Request.ContentEncoding.GetBytes(sr.ReadToEnd());
+
+                            Task.Run(() => handler.task.Invoke(data)); 
+                            byte[] message =
+                            Encoding.UTF8.GetBytes(
+                                "<!DOCTYPE>" +
+                                "<html>" +
+                                "  <head>" +
+                                "    <title>HAB Server</title>" +
+                                "  </head>" +
+                                "  <body>" +
+                                "  <p>OK</p>" + 
+                                "  </body>" +
+                                "</html>");
+
+                            HttpListenerResponse response = context.Response;  
+                            response.ContentType = "text/html";
+                            response.ContentEncoding = Encoding.UTF8; 
+                            response.ContentLength64 = message.Length; 
+                            await response.OutputStream.WriteAsync(message, 0, message.Length);
+                            response.OutputStream.Close();    
+                        }
+                        
                          
                 }
             }

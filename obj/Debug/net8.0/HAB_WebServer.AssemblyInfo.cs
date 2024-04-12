@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("HAB_WebServer")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+fa798238b0b686dd0f255ea3830afdc25e334485")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a20cb247e64a335833fb47ac9c38322a53b36c3b")]
 [assembly: System.Reflection.AssemblyProductAttribute("HAB_WebServer")]
 [assembly: System.Reflection.AssemblyTitleAttribute("HAB_WebServer")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
