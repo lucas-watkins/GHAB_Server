@@ -10,7 +10,7 @@ namespace Server{
         }
 
 
-        public static string writeGot(){
+        public static string writeGot(byte[]m){
             Console.WriteLine("Get Recieved");
             return "Hello World!";     
         }

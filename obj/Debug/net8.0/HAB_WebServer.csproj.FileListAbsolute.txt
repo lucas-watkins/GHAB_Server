@@ -12,3 +12,4 @@
 /Users/lucas/Documents/MyScripts/HeronsEyeBalloon/NewImageRoutingServer/obj/Debug/net8.0/HAB_WebServer.pdb
 /Users/lucas/Documents/MyScripts/HeronsEyeBalloon/NewImageRoutingServer/obj/Debug/net8.0/HAB_WebServer.genruntimeconfig.cache
 /Users/lucas/Documents/MyScripts/HeronsEyeBalloon/NewImageRoutingServer/obj/Debug/net8.0/ref/HAB_WebServer.dll
+/Users/lucas/Documents/MyScripts/HeronsEyeBalloon/NewImageRoutingServer/obj/Debug/net8.0/HAB_WebServer.sourcelink.json

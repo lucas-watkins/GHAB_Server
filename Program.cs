@@ -6,11 +6,11 @@ namespace Server{
 
     // context handler class which stores a task, string, and bool to determine what context the http get is in 
     class contextHandler{
-        public Func<string> task {get;}
+        public Func<byte[], string> task {get;}
         public string path {get;}
 
         public bool isPost{get;}
-        public contextHandler(Func<string> task, string path, bool isPost){
+        public contextHandler(Func<byte[], string> task, string path, bool isPost){
             this.task = task; 
             this.path = path; 
             this.isPost = isPost;
@@ -47,8 +47,10 @@ namespace Server{
 
         public async Task Serve(){
             while (isRunning){
+                // allows for handling of multiple connections
                 context = await httpListener.GetContextAsync();
-                await handleIncommingConnections(context);
+                #pragma warning disable 4014
+                Task.Run(() => handleIncommingConnections(context));
             }
             Stop(); 
         }
@@ -71,7 +73,7 @@ namespace Server{
                                 "    <title>HAB Server</title>" +
                                 "  </head>" +
                                 "  <body>" +
-                                "  <p>" + handler.task.Invoke() + "</p>" + 
+                                "  <p>" + handler.task.Invoke([]) + "</p>" + 
                                 "  </body>" +
                                 "</html>"; 
 
