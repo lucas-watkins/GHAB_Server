@@ -3,3 +3,4 @@ obj/
 images/
 logs/
 *.jpg
+.DS_Store
