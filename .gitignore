@@ -1,0 +1,5 @@
+bin/
+obj/
+images/
+logs/
+*.jpg
