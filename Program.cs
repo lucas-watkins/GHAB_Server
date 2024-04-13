@@ -90,10 +90,15 @@ namespace Server{
                         // if http method is post then run a task asyncronously with the read bytes as input and send
                         // back "OK" on webpage
                         if (httpMethod.Equals("POST")){ 
-                            Stream inputStream = context.Request.InputStream;
-                            StreamReader sr = new StreamReader(inputStream, context.Request.ContentEncoding); 
-                            byte[] data = context.Request.ContentEncoding.GetBytes(sr.ReadToEnd());
 
+                            // read all bytes with memory stream, make sure not to include headers in the request
+                            // in client software otherwise this will not work to save images properly
+                            Stream inputStream = context.Request.InputStream;
+                            MemoryStream ms = new MemoryStream(); 
+                            inputStream.CopyTo(ms); 
+                            byte[] data = ms.ToArray(); 
+
+                            // handle task
                             Task.Run(() => handler.task.Invoke(data)); 
                             byte[] message =
                             Encoding.UTF8.GetBytes(
@@ -103,7 +108,7 @@ namespace Server{
                                 "    <title>HAB Server</title>" +
                                 "  </head>" +
                                 "  <body>" +
-                                "  <p>OK</p>" + 
+                                "  <p>Submit OK</p>" + 
                                 "  </body>" +
                                 "</html>");
 
