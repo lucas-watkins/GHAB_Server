@@ -2,69 +2,70 @@
 using System.Text;
 // lol there was a 12gb memory leak with this one 
 
-namespace Server{
+namespace HAB_WebServer{
 
     // context handler class which stores a task, string, and bool to determine what context the http get is in 
-    class contextHandler{
-        public Func<byte[], string> task {get;}
-        public string path {get;}
+    class ContextHandler(Func<byte[], string> task, string path, bool isPost)
+    {
+        public Func<byte[], string> Task {get;} = task;
+        public string Path {get;} = path;
 
-        public bool isPost{get;}
-        public contextHandler(Func<byte[], string> task, string path, bool isPost){
-            this.task = task; 
-            this.path = path; 
-            this.isPost = isPost;
-        }
+        public bool IsPost{get;} = isPost;
     }
 
     class BaseHttpServer{
-        bool isRunning = true; 
+        bool _isRunning = true; 
         
         // http listener class for server
-        private HttpListener httpListener;
+        private HttpListener? _httpListener;
 
-        private HttpListenerContext? context;
+        private HttpListenerContext? _context;
         
         // url to serve on 
-        public string baseURL = "http://*:";
+        protected string? BaseUrl;
 
-        public int port = 8080; 
+        protected int? Port;
 
-        public contextHandler[] ctxHandlers = []; 
+        protected ContextHandler[] CtxHandlers = []; 
 
-
-        public BaseHttpServer(){
-            httpListener = new HttpListener();
-            httpListener.Prefixes.Add(baseURL + port.ToString() + "/");
-            httpListener.Start();
-
+        protected void SetPort(int port)
+        {
+            this.Port = port; 
         }
 
-        public void Stop(){
-            httpListener.Stop();
-            isRunning = false; 
+        protected void SetBaseUrl(string url)
+        {
+            this.BaseUrl = url; 
         }
 
-        public async Task Serve(){
-            while (isRunning){
+        protected void Stop(){
+            _httpListener?.Stop();
+            _isRunning = false; 
+        }
+
+        protected async Task Serve(){
+            _httpListener = new HttpListener();
+            _httpListener.Prefixes.Add(BaseUrl + ':' + Port.ToString() + "/");
+            _httpListener.Start();
+            while (_isRunning){
                 // allows for handling of multiple connections
-                context = await httpListener.GetContextAsync();
+                _context = await _httpListener.GetContextAsync();
                 #pragma warning disable 4014
-                Task.Run(() => handleIncommingConnections(context));
+                Task.Run(() => HandleIncomingConnections(_context));
             }
             Stop(); 
         }
 
-        public async Task handleIncommingConnections(HttpListenerContext context){
+        private async Task HandleIncomingConnections(HttpListenerContext context){
             // foreach contexthandler in the list of handlers, if it matches the http method and is the request url,
             // then start the task
             // nullable path for server request, but check for null anyways during the if statement
             string? absPath = context.Request.Url?.AbsolutePath;
             string httpMethod = context.Request.HttpMethod;
-            foreach (contextHandler handler in ctxHandlers){
-                if (absPath != null &&(handler.isPost ? "POST" : "GET").Equals(httpMethod) && 
-                    handler.path.Equals(absPath)){
-                        // if http method is get get response and send back message returned from task
+            foreach (ContextHandler handler in CtxHandlers){
+                if (absPath != null &&(handler.IsPost ? "POST" : "GET").Equals(httpMethod) && 
+                    handler.Path.Equals(absPath)){
+                        // if http method is get response and send back message returned from task
                         if (httpMethod.Equals("GET")){
                             HttpListenerResponse response = context.Response;
                             string message = 
@@ -74,7 +75,7 @@ namespace Server{
                                 "    <title>HAB Server</title>" +
                                 "  </head>" +
                                 "  <body>" +
-                                "  <p>" + handler.task.Invoke([]) + "</p>" + 
+                                "  <p>" + handler.Task.Invoke([]) + "</p>" + 
                                 "  </body>" +
                                 "</html>"; 
 
@@ -87,7 +88,7 @@ namespace Server{
                             response.OutputStream.Close(); 
                         }
 
-                        // if http method is post then run a task asyncronously with the read bytes as input and send
+                        // if http method is post then run a task asynchronously with the read bytes as input and send
                         // back "OK" on webpage
                         if (httpMethod.Equals("POST")){ 
 
@@ -99,7 +100,7 @@ namespace Server{
                             byte[] data = ms.ToArray(); 
 
                             // handle task
-                            Task.Run(() => handler.task.Invoke(data)); 
+                            Task.Run(() => handler.Task.Invoke(data)); 
                             byte[] message =
                             Encoding.UTF8.GetBytes(
                                 "<!DOCTYPE>" +
