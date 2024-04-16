@@ -17,7 +17,7 @@ namespace HAB_WebServer{
         bool _isRunning = true; 
         
         // http listener class for server
-        private HttpListener? _httpListener;
+        public static HttpListener? _httpListener;
 
         private HttpListenerContext? _context;
         
@@ -38,11 +38,6 @@ namespace HAB_WebServer{
             this.BaseUrl = url; 
         }
 
-        protected void Stop(){
-            _httpListener?.Stop();
-            _isRunning = false; 
-        }
-
         protected async Task Serve(){
             _httpListener = new HttpListener();
             _httpListener.Prefixes.Add(BaseUrl + ':' + Port.ToString() + "/");
@@ -53,11 +48,10 @@ namespace HAB_WebServer{
                 #pragma warning disable 4014
                 Task.Run(() => HandleIncomingConnections(_context));
             }
-            Stop(); 
         }
 
         private async Task HandleIncomingConnections(HttpListenerContext context){
-            // foreach contexthandler in the list of handlers, if it matches the http method and is the request url,
+            // foreach context handler in the list of handlers, if it matches the http method and is the request url,
             // then start the task
             // nullable path for server request, but check for null anyways during the if statement
             string? absPath = context.Request.Url?.AbsolutePath;
@@ -96,7 +90,7 @@ namespace HAB_WebServer{
                             // in client software otherwise this will not work to save images properly
                             Stream inputStream = context.Request.InputStream;
                             MemoryStream ms = new MemoryStream(); 
-                            inputStream.CopyTo(ms); 
+                            await inputStream.CopyToAsync(ms); 
                             byte[] data = ms.ToArray(); 
 
                             // handle task

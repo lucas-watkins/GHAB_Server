@@ -6,6 +6,9 @@ namespace HAB_WebServer{
         private int _imageNumber;
         
         private MainServer(){
+            // add console event handler 
+            ConsoleEventHandler.AddConsoleEventHandler(); 
+            
             // checks if images directory exists and if not creates it 
             if (!Directory.Exists("images")){
                 Directory.CreateDirectory("images");
@@ -24,8 +27,8 @@ namespace HAB_WebServer{
 
         public static async Task Main(string[] args)
         {
-            MainServer s = new MainServer();
-            await s.Serve();   
+                MainServer s = new MainServer();
+                await s.Serve();
         }
 
         // in a post request the byte array is passed as the received data from said request
