@@ -14,37 +14,31 @@ namespace HAB_WebServer{
     }
 
     class BaseHttpServer{
-        bool _isRunning = true; 
+        const bool IsRunning = true; 
         
         // http listener class for server
-        public static HttpListener? _httpListener;
+        public static HttpListener? HttpListener;
 
         private HttpListenerContext? _context;
         
         // url to serve on 
-        protected string? BaseUrl;
+        public static string? BaseUrl;
 
-        protected int? Port;
+        public static int? Port;
 
-        protected ContextHandler[] CtxHandlers = []; 
+        protected ContextHandler[] CtxHandlers = [];
 
-        protected void SetPort(int port)
-        {
-            this.Port = port; 
-        }
-
-        protected void SetBaseUrl(string url)
-        {
-            this.BaseUrl = url; 
-        }
-
+        protected Logging? Logger; 
+        
         protected async Task Serve(){
-            _httpListener = new HttpListener();
-            _httpListener.Prefixes.Add(BaseUrl + ':' + Port.ToString() + "/");
-            _httpListener.Start();
-            while (_isRunning){
+            HttpListener = new HttpListener();
+            HttpListener.Prefixes.Add(BaseUrl + ':' + Port.ToString() + "/");
+            HttpListener.Start();
+            // if logger not null start server
+            Logger?.LogServerStart();
+            while (IsRunning){
                 // allows for handling of multiple connections
-                _context = await _httpListener.GetContextAsync();
+                _context = await HttpListener.GetContextAsync();
                 #pragma warning disable 4014
                 Task.Run(() => HandleIncomingConnections(_context));
             }
@@ -60,6 +54,10 @@ namespace HAB_WebServer{
                 if (absPath != null &&(handler.IsPost ? "POST" : "GET").Equals(httpMethod) && 
                     handler.Path.Equals(absPath)){
                         // if http method is get response and send back message returned from task
+                        // log incoming connection if logger is not null
+                        Logger?.LogIncomingConnection(context.Request.UserHostAddress, 
+                            absPath, httpMethod);
+                        
                         if (httpMethod.Equals("GET")){
                             HttpListenerResponse response = context.Response;
                             string message = 
@@ -92,6 +90,9 @@ namespace HAB_WebServer{
                             MemoryStream ms = new MemoryStream(); 
                             await inputStream.CopyToAsync(ms); 
                             byte[] data = ms.ToArray(); 
+                            
+                            // Log connection
+                            
 
                             // handle task
                             Task.Run(() => handler.Task.Invoke(data)); 

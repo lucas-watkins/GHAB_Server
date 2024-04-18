@@ -1,11 +1,9 @@
-using System.Net;
-
 namespace HAB_WebServer
 {
 
-    class ConsoleEventHandler
+    static class ConsoleEventHandler
     {
-        
+        // add event handler to console on key press
         public static void AddConsoleEventHandler()
         {
             Console.CancelKeyPress += Handle;
@@ -15,7 +13,7 @@ namespace HAB_WebServer
         private static void Handle(object? sender, ConsoleCancelEventArgs args)
         {
             Console.WriteLine("\nStopping Server...");
-            BaseHttpServer._httpListener?.Stop();
+            BaseHttpServer.HttpListener?.Stop();
             Environment.Exit(Environment.ExitCode);
         }
     }

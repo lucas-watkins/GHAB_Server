@@ -1,6 +1,6 @@
 using System.Text;
-
 namespace HAB_WebServer{
+    
     class MainServer : BaseHttpServer{
 
         private int _imageNumber;
@@ -22,6 +22,9 @@ namespace HAB_WebServer{
                            new ContextHandler(SaveImage, "/submit", true)];
             Port = 8080;
             BaseUrl = "http://*";
+            
+            // create logger with logging level
+            Logger = new Logging(LoggingLevels.Normal); 
 
         }
 
