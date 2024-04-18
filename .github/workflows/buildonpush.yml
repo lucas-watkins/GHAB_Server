@@ -1,0 +1,15 @@
+run-name: Build Server for Linux On Push
+on: 
+  push:
+    branches:
+    - build
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+     - uses: actions/checkout@v1
+     - run: dotnet build
+     - run: git commit -m "Auto Build for Linux" 
+     - run: git push origin build
+    
+    
