@@ -28,6 +28,8 @@ jobs:
       run: git config --global user.name "Lucas Watkins"
     - name: Add
       run: git add bin/ -f
+    - name: Change Branch
+      run: git branch -M build
     - name: Commit
       run: git commit -m "Auto Build for Linux"
     - name: Push
