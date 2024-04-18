@@ -3,6 +3,7 @@ namespace HAB_WebServer{
     
     class MainServer : BaseHttpServer{
 
+        // image number for file
         private int _imageNumber;
         
         private MainServer(){
