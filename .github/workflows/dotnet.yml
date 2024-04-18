@@ -31,4 +31,4 @@ jobs:
     - name: Commit
       run: git commit -m "Auto Build for Linux"
     - name: Push
-      run: git push origin build 
+      run: git push -f origin build 
