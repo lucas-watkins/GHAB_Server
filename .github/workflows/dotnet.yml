@@ -23,7 +23,7 @@ jobs:
     - name: Build
       run: dotnet build --no-restore
     - name: Add
-      run: git add bin/
+      run: git add bin/ -f
     - name: Commit
       run: git commit -m "Auto Build for Linux"
     - name: Push
