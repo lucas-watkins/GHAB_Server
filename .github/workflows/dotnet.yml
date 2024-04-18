@@ -22,7 +22,7 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
-      run: dotnet build --no-restore
+      run: dotnet build --no-restore --configuration Release
     - name: Email
       run: git config --global user.email "lwatkins26@gunston.org"
     - name: Name
