@@ -6,8 +6,6 @@ name: .NET
 on:
   push:
     branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
 
 jobs:
   build:
@@ -24,3 +22,9 @@ jobs:
       run: dotnet restore
     - name: Build
       run: dotnet build --no-restore
+    - name: Add
+      run: git add bin/
+    - name: Commit
+      run: git commit -m "Auto Build for Linux"
+    - name: Push
+      run: git push origin build 
